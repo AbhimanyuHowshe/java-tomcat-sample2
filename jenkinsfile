@@ -1,0 +1,16 @@
+pipeline {
+    agent any
+    stages{
+        stage('Build Application') {
+            steps {
+                sh 'mvn cleann package'
+            }
+        }
+        post {
+            success {
+                    echo " now archieving the arfacts"
+                    archieveArtifacts artifacts: '**/*.war'
+            }
+        }
+    }
+}
