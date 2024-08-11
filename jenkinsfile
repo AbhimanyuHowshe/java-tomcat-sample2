@@ -1,19 +1,21 @@
 pipeline {
-     agent {
+    agent {
         label 'linux_slave2'
     }
-    stages{
+    
+    stages {
         stage('Build Application') {
             steps {
-                sh 'mvn cleann package'
+                // Corrected Maven command
+                sh 'mvn clean package'
             }
-        }
-        
         }
     }
     post {
-            success {
-                    echo " now archieving the arfacts"
-                    archieveArtifacts artifacts: '**/*.war'
-            }
+        success {
+            echo "Now archiving the artifacts"
+            // Corrected typo from archieveArtifacts to archiveArtifacts
+            archiveArtifacts artifacts: '**/*.war'
+        }
+    }
 }
