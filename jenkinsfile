@@ -1,42 +1,29 @@
 pipeline {
-    agent {
-        label 'linux_slave2'
-    }
-    tools {
-        maven 'mymaven' // Ensure this Maven version is configured in Jenkins Global Tool Configuration
-    }
+    agent any
     stages {
         stage('Build Application') {
             steps {
-                // Run Maven to clean and package the application
-                sh 'mvn clean package'
+                sh 'mvn -f java-tomcat-sample/pom.xml clean package'
+            }
+            post {
+                success {
+                    echo "Now Archiving the Artifacts...."
+                    archiveArtifacts artifacts: '**/*.war'
+                }
             }
         }
-        stage('Deploy in staging environment') {
+        stage('Deploy in Staging Environment') {
             steps {
-                // Trigger the deployment job in Jenkins
                 build job: 'Deploy_Application_Staging_Env'
             }
         }
-        stage('Deploy_Application_Prod_Env') {
+        stage('Deploy to Production') {
             steps {
-                 timeout(time:5, unit :'DAYS'){
-                    input message :"APPORVAL FOR DEPLOYMENT IN PRODUCTION"
-                 }
-                // Trigger the deployment job in Jenkins
-                build job: 'Deploy_Application_Prod_Env
-'
+                timeout(time: 5, unit: 'DAYS') {
+                    input message: 'Approve PRODUCTION Deployment?'
+                }
+                build job: 'Deploy_Application_Prod_Env'
             }
-        }
-    }
-    post {
-        success {
-            echo "Archiving the artifacts..."
-            // Archive the artifacts (e.g., WAR files)
-            archiveArtifacts artifacts: '**/*.war'
-        }
-        failure {
-            echo "Build failed. Please check the logs."
         }
     }
 }
