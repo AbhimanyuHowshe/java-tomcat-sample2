@@ -2,6 +2,9 @@ pipeline {
     agent {
         label 'linux_slave2'
     }
+    tools {
+        maven 'mymaven'  // Ensure this matches the name you set in Global Tool Configuration
+    }
     stages {
         stage('Build Application') {
             steps {
