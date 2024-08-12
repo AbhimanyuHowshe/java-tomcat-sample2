@@ -3,24 +3,30 @@ pipeline {
         label 'linux_slave2'
     }
     tools {
-        maven 'mymaven' // Specify the Maven version name as configured in Global Tool Configuration
+        maven 'mymaven' // Ensure this Maven version is configured in Jenkins Global Tool Configuration
     }
     stages {
         stage('Build Application') {
             steps {
-                // Corrected Maven command
+                // Run Maven to clean and package the application
                 sh 'mvn clean package'
             }
         }
-        stage('Deploy in staging environment'){
-            build job : 'Deploy_Application_Staging_Env'
+        stage('Deploy in staging environment') {
+            steps {
+                // Trigger the deployment job in Jenkins
+                build job: 'Deploy_Application_Staging_Env'
+            }
         }
     }
     post {
         success {
-            echo "Now archiving the artifacts"
-            // Corrected typo from archieveArtifacts to archiveArtifacts
+            echo "Archiving the artifacts..."
+            // Archive the artifacts (e.g., WAR files)
             archiveArtifacts artifacts: '**/*.war'
+        }
+        failure {
+            echo "Build failed. Please check the logs."
         }
     }
 }
