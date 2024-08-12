@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        'linux_slave'
+        label 'linux_slave'
     }
     stages {
         stage('Build Application') {
