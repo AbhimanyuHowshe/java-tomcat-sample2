@@ -18,6 +18,16 @@ pipeline {
                 build job: 'Deploy_Application_Staging_Env'
             }
         }
+        stage('Deploy_Application_Prod_Env') {
+            steps {
+                 timeout(time:5, unit :'DAYS'){
+                    input message :"APPORVAL FOR DEPLOYMENT IN PRODUCTION"
+                 }
+                // Trigger the deployment job in Jenkins
+                build job: 'Deploy_Application_Prod_Env
+'
+            }
+        }
     }
     post {
         success {
